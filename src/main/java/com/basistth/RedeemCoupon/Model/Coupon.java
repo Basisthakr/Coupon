@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -49,4 +50,7 @@ public class Coupon {
     private LocalDateTime expiryDateTime;
     @Builder.Default
     private Boolean active=false;
+
+    @Version
+    private Long version;
 }
