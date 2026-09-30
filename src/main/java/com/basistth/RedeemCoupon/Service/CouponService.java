@@ -1,7 +1,11 @@
 package com.basistth.RedeemCoupon.Service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 
+import com.basistth.RedeemCoupon.DTO.CouponCreated;
+import com.basistth.RedeemCoupon.DTO.NewCoupon;
 import com.basistth.RedeemCoupon.Model.Coupon;
 import com.basistth.RedeemCoupon.Repositories.CouponRepo;
 
@@ -17,8 +21,17 @@ public class CouponService {
     
     private final CouponRepo couponRepo;
 
-    public void createCoupon(Coupon c) throws Exception//A DTO would be better suited here, but this is just for practice
-    {//A DTO that checks that everything is good, then properly builds Coupon using builder would be the proper way
-        couponRepo.save(c);
+    public CouponCreated createCoupon(NewCoupon c) throws Exception
+    {
+        if(c.getExpiryDateTime().isBefore(LocalDateTime.now().plusDays(1))){
+            throw new IllegalArgumentException("The expiry date for the coupon must be atleast 1 day from now");
+        }
+        Coupon nc = Coupon.builder().code(c.getCode())
+                                    .discountPercent(c.getDiscountPercent())
+                                    .maxRedemptions(c.getMaxRedemptions())
+                                    .expiryDateTime(c.getExpiryDateTime()).build();
+
+        Coupon savedCoupon = couponRepo.save(nc);
+        return CouponCreated.builder().id(savedCoupon.getId()).build();
     }
 }
