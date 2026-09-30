@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 
 import com.basistth.RedeemCoupon.DTO.CouponCreated;
 import com.basistth.RedeemCoupon.DTO.NewCoupon;
-import com.basistth.RedeemCoupon.Model.Coupon;
 import com.basistth.RedeemCoupon.Service.CouponService;;
 
 @RestController
