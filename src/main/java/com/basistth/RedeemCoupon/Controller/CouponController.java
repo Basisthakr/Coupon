@@ -1,8 +1,10 @@
 package com.basistth.RedeemCoupon.Controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 import com.basistth.RedeemCoupon.DTO.CouponCreated;
+import com.basistth.RedeemCoupon.DTO.CouponCode;
+import com.basistth.RedeemCoupon.DTO.CouponStatus;
 import com.basistth.RedeemCoupon.DTO.NewCoupon;
 import com.basistth.RedeemCoupon.DTO.RedeemStatus;
 import com.basistth.RedeemCoupon.Service.CouponService;;
@@ -30,7 +34,17 @@ public class CouponController {
 
     @PostMapping("/{code}/redeem")
     public ResponseEntity<RedeemStatus> redeemCoupon(@PathVariable String code){
-        couponService.redeemCoupon(code)
+        couponService.redeemCoupon(code);
         return ResponseEntity.status(HttpStatus.OK).body(new RedeemStatus("The coupon has been successfully redeemed!"));
+    }
+
+    @GetMapping("/{code}")
+    public ResponseEntity<CouponStatus> getCoupon(@PathVariable String code){
+        return ResponseEntity.ok(couponService.getCoupon(code));
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<CouponCode>> getAllActiveCoupons(){
+        return ResponseEntity.ok(couponService.getAllActiveCoupons());
     }
 }

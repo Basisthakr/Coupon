@@ -1,11 +1,15 @@
 package com.basistth.RedeemCoupon.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
+import com.basistth.RedeemCoupon.DTO.CouponCode;
 import com.basistth.RedeemCoupon.DTO.CouponCreated;
+import com.basistth.RedeemCoupon.DTO.CouponStatus;
 import com.basistth.RedeemCoupon.DTO.NewCoupon;
 import com.basistth.RedeemCoupon.Exceptions.CouponNotValidException;
 import com.basistth.RedeemCoupon.Model.Coupon;
@@ -23,7 +27,7 @@ public class CouponService {
     
     private final CouponRepo couponRepo;
 
-    public CouponCreated createCoupon(NewCoupon c) throws Exception
+    public CouponCreated createCoupon(NewCoupon c)
     {
         if(c.getExpiryDateTime().isBefore(LocalDateTime.now().plusDays(1))){
             throw new IllegalArgumentException("The expiry date for the coupon must be atleast 1 day from now");
@@ -45,5 +49,25 @@ public class CouponService {
         }
         c.setTimesRedeemed(c.getTimesRedeemed()+1);
         couponRepo.save(c);
+    }
+
+    public CouponStatus getCoupon(String code){
+        Coupon c = couponRepo.findByCode(code).orElseThrow(() -> new CouponNotValidException(""));
+        return CouponStatus.builder().discountPercent(c.getDiscountPercent())
+                                     .timesRedeemed(c.getTimesRedeemed())
+                                     .maxRedemptions(c.getMaxRedemptions())
+                                     .expiryDateTime(c.getExpiryDateTime())
+                                     .active(c.getActive())
+                                     .build();
+    }
+
+    public List<CouponCode> getAllActiveCoupons(){
+        List<Coupon> list = couponRepo.findAvailableCoupons();
+        List<CouponCode> result = list.stream().map(this::toCouponCode).collect(Collectors.toList());
+        return result;
+    }
+
+    public CouponCode toCouponCode(Coupon c){
+        return CouponCode.builder().code(c.getCode()).build();
     }
 }
