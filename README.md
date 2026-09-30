@@ -1,0 +1,1 @@
+This is a simple coupon Redemption system. You can add a coupon, you can redeem it, you can find all active ones, handles concurrency and race conditions etc. It is a simple project, that I made just for some practice. 
